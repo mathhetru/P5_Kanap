@@ -33,7 +33,7 @@ function showCouchs(productsSheet) {
         createH3.textContent = product.name;
         createArticle.appendChild(createH3);
 
-        var createP = document.createElement('P');
+        var createP = document.createElement('p');
         createP.className = 'productDescription';
         createP.textContent = product.description;
         createArticle.appendChild(createP);
