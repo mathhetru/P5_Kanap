@@ -16,6 +16,7 @@ request.onload = function (){
     showProduct(productUnit);
 }
 
+
 //AFFICHAGE DU PRODUIT PAR PAGE PRODUIT
 function showProduct(productSheet) {
     document.title = productSheet.name;
@@ -64,41 +65,61 @@ let sendToBasket = document.querySelector('#addToCart');
 
 // écoute du click sur l'ajout au panier
 sendToBasket.addEventListener('click', function (event) {
-    // ajout du localstorage dans une variable
-    var stockBasket = localStorage;
-
-    // récupération des valeurs de quantité et de couleurs dans des variables
+     // récupération des valeurs de quantité et de couleurs du produit choisi dans des variables
     let valueColor = chosenColor.value; 
     let valueQuantity = chosenQuantity.value;
+    if (valueQuantity <= 0 || valueQuantity > 100 || valueColor == ""){
+        window.alert("Veuillez choisir une quantité entre 1 et 100 et/ou une couleur de canapé");
+    } else {
+        // récupération du contenu du panier (sans produit choisi de la page actuel)
+        let basketStr = localStorage.getItem('basket');
+        if (basketStr == null) {
+            var basket = {
+                totalPrice: 0,
+                products: []
+            }
+        } else { 
+            var basket = JSON.parse(basketStr)
+        }
 
-    //ajout des indications du produit (pour l'ajout au panier)
-    let infoChosenProduct = {
-        id: productUnit._id,
-        nom: productUnit.name,
-        prix: productUnit.price,
-        couleur: valueColor,
-        quantité: valueQuantity,
-    }
-    let lineInfoChosenProduct = JSON.stringify(infoChosenProduct)
-    
-    // si la valeur de la quantité est supérieur à 1 et inférieur ou égale à 0 ALORS ajouter au panier
+        // creation du produit choisi
+        let chosenProduct = {
+            id: productUnit._id,
+            name: productUnit.name,
+            price: productUnit.price,
+            color: valueColor,
+            quantity: Number(valueQuantity),
+        }
 
-    if (valueQuantity == 0 || valueQuantity > 100 || valueColor == "") { 
-        window.alert("Veuillez choisir une quantité entre 1 et 100 et/ou une couleur de canapé")
-    } else { 
-        stockBasket.setItem('StrPanier', lineInfoChosenProduct)
+        // 
+        boolean = false;
+        for (var i = 0 ; i < basket.products.length; i++) {
+            basketProduct = basket.products[i];
+            if (basketProduct.id == chosenProduct.id && basketProduct.color == chosenProduct.color) {
+                newQuantity = basketProduct.quantity + chosenProduct.quantity;
+                basketProduct.quantity = newQuantity;
+                boolean = true;
+                break;
+            }
+        }   
+        if (boolean == false) {
+            basket.products.push(chosenProduct);
+        }
+        let lineBasket = JSON.stringify(basket);
+        localStorage.setItem("basket", lineBasket);
+        
+        /*     
+        for (var i = 0 ; i < basket.products.length; i++) {
+            basketProduct = basket.products[i];
+            if (basketProduct.id == chosenProduct.id && basketProduct.color == chosenProduct.color) {
+                newQuantity = basketProduct.quantity + chosenProduct.quantity;
+                basketProduct.quantity = newQuantity;
+            } else { 
+                basket.products.push(chosenProduct);
+            }
+        }   
+        let lineBasket = JSON.stringify(basket);
+        localStorage.setItem("basket", lineBasket); 
+        */
     }
-    console.log(stockBasket)
 });
-    /*
-    if (valueQuantity > 1 && valueQuantity <= 100 && valueColor != ""){
-        stockBasket.setItem('StrPanier', lineInfoChosenProduct)
-    } else { 
-        window.alert("Veuillez choisir une quantité entre 1 et 100 et/ou une couleur de canapé")
-    }
-    console.log(stockBasket)
-});
-
-    // l'envoyer à la page panier
-    // /!\ si un element est déjà dans le panier
-    // faire une popup de confirmation*/
