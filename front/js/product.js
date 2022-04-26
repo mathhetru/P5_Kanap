@@ -89,6 +89,7 @@ sendToBasket.addEventListener('click', function (event) {
             price: productUnit.price,
             color: valueColor,
             quantity: Number(valueQuantity),
+            img: productUnit.imageUrl,
         }
 
         // 
