@@ -76,6 +76,7 @@ sendToBasket.addEventListener('click', function (event) {
         if (basketStr == null) {
             var basket = {
                 totalPrice: 0,
+                totalQuantity: 0,
                 products: []
             }
         } else { 

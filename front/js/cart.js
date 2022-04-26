@@ -9,6 +9,8 @@ function showProductBasket(produit) {
     // insertion des articles
     var createArticle = document.createElement('article');
     createArticle.className = 'cart__item';
+    createArticle.setAttribute('data-id', produit.id);
+    createArticle.setAttribute('data-color', produit.color);
     cartPanel.appendChild(createArticle);
 
     // insertion div de l'img
@@ -39,12 +41,12 @@ function showProductBasket(produit) {
 
     // insertion P color
     var createpColor = document.createElement('p');
-    createpColor.textContent = produit.color;
+    createpColor.textContent = "Couleur : " + produit.color;
     createDivDes.appendChild(createpColor);
 
     // insertion P price
     var createpPrice = document.createElement('p');
-    createpPrice.textContent = produit.price;
+    createpPrice.textContent = "Prix : " + produit.price + " € / canapé";
     createDivDes.appendChild(createpPrice);
 
     // insertion div content settings
@@ -95,10 +97,15 @@ if (basketStr == null) {
     for (var i = 0 ; i < basket.products.length; i++) {
         basketProduct = basket.products[i];
         showProductBasket(basketProduct);
+        basket.totalPrice += basketProduct.price * basketProduct.quantity; 
+        basket.totalQuantity += basketProduct.quantity;
     }
+    let totalQuantity = document.querySelector('#totalQuantity');
+    let totalPrice = document.querySelector('#totalPrice');
+    totalPrice.textContent = basket.totalPrice;
+    totalQuantity.textContent = basket.totalQuantity;
 }
 
-let totalQuantity = document.querySelector('#totalQuantity');
-    let totalPrice = document.querySelector('#totalPrice');
+
 
 
