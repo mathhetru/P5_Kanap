@@ -106,6 +106,42 @@ if (basketStr == null) {
     totalQuantity.textContent = basket.totalQuantity;
 }
 
+// Suppression du/des canapé(s)
+var delItem = document.querySelectorAll('.deleteItem');
 
+for (let j = 0; j < delItem.length; j++){
+    delItemUnit = delItem[j];
+    delItemUnit.addEventListener('click', function(event) {
+        var articleDelItemID = delItemUnit.closest('article').getAttribute("data-id");
+        var articleDelItemColor = delItemUnit.closest('article').getAttribute("data-color");
+        
+        var basket = JSON.parse(basketStr);   
+        
+        result = basket.products.filter(el => el.id !== articleDelItemID || el.color !== articleDelItemColor);
+        basket.products = result;
+        let lineBasket = JSON.stringify(basket);
+        localStorage.setItem("basket", lineBasket);
+        window.location.reload()
+    })
+};
+
+// Changement quantité
+var quantityItem = document.querySelectorAll('.itemQuantity');
+
+for (let k = 0; k < quantityItem.length; k++){
+    quantityItemUnit = quantityItem[k];
+    quantityItemUnit.addEventListener('change', function(event) {
+        var articleQuantityItemID = delItemUnit.closest('article').getAttribute("data-id");
+        newQuantityValue = event.target.valueAsNumber;
+        quantityValue = quantityItemUnit.setAttribute("value", newQuantityValue);
+        var basket = JSON.parse(basketStr);   
+
+        /*result = basket.products.filter(el => el.id !== articleDelItemID || el.color !== articleDelItemColor);
+        basket.products = result;
+        let lineBasket = JSON.stringify(basket);
+        localStorage.setItem("basket", lineBasket);
+        window.location.reload()*/
+    })
+};
 
 
