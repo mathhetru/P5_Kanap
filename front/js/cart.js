@@ -1,5 +1,6 @@
 // récupération du contenu du panier 
 let basketStr = localStorage.getItem('basket');
+var basket = JSON.parse(basketStr); 
 
 // récupération de cart__items
 var cartPanel = document.querySelector('#cart__items');
@@ -92,19 +93,39 @@ if (basketStr == null) {
     var createpEmpty = document.createElement('p');
     createpEmpty.textContent = 'Votre panier est vide';
     cartPanel.appendChild(createpEmpty);
-} else { 
-    var basket = JSON.parse(basketStr);   
+} else {   
     for (var i = 0 ; i < basket.products.length; i++) {
         basketProduct = basket.products[i];
         showProductBasket(basketProduct);
-        basket.totalPrice += basketProduct.price * basketProduct.quantity; 
-        basket.totalQuantity += basketProduct.quantity;
     }
     let totalQuantity = document.querySelector('#totalQuantity');
     let totalPrice = document.querySelector('#totalPrice');
     totalPrice.textContent = basket.totalPrice;
     totalQuantity.textContent = basket.totalQuantity;
 }
+
+// Changement quantité et prix
+var quantityItem = document.querySelectorAll('.itemQuantity');
+
+for (let k = 0; k < quantityItem.length; k++){ 
+    quantityItemUnit = quantityItem[k];
+    quantityItemUnit.addEventListener('change', function(event) {
+        for (var l = 0 ; l < basket.products.length; l++) {
+            basketProduct = basket.products[l];
+            var articleQuantityItemID = event.target.closest('article').getAttribute("data-id");
+            var articleQuantityItemColor = event.target.closest('article').getAttribute("data-color");
+            newQuantityValue = event.target.valueAsNumber;
+            if (basketProduct.id == articleQuantityItemID && basketProduct.color == articleQuantityItemColor) {
+                qtyToAdd = newQuantityValue - basketProduct.quantity;
+                basketProduct.quantity = newQuantityValue;
+                basket.totalQuantity = basket.totalQuantity + qtyToAdd;
+                let lineBasket = JSON.stringify(basket);
+                localStorage.setItem("basket", lineBasket);
+                window.location.reload();
+            }
+        }  
+    })
+};
 
 // Suppression du/des canapé(s)
 var delItem = document.querySelectorAll('.deleteItem');
@@ -124,24 +145,3 @@ for (let j = 0; j < delItem.length; j++){
         window.location.reload()
     })
 };
-
-// Changement quantité
-var quantityItem = document.querySelectorAll('.itemQuantity');
-
-for (let k = 0; k < quantityItem.length; k++){
-    quantityItemUnit = quantityItem[k];
-    quantityItemUnit.addEventListener('change', function(event) {
-        var articleQuantityItemID = delItemUnit.closest('article').getAttribute("data-id");
-        newQuantityValue = event.target.valueAsNumber;
-        quantityValue = quantityItemUnit.setAttribute("value", newQuantityValue);
-        var basket = JSON.parse(basketStr);   
-
-        /*result = basket.products.filter(el => el.id !== articleDelItemID || el.color !== articleDelItemColor);
-        basket.products = result;
-        let lineBasket = JSON.stringify(basket);
-        localStorage.setItem("basket", lineBasket);
-        window.location.reload()*/
-    })
-};
-
-

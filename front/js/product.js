@@ -93,20 +93,31 @@ sendToBasket.addEventListener('click', function (event) {
             img: productUnit.imageUrl,
         }
 
-        // 
+        // ajout de la quantité du produit choisi à la quantité des produits dans le panier (SI ils ont le même id et même color)
         boolean = false;
         for (var i = 0 ; i < basket.products.length; i++) {
             basketProduct = basket.products[i];
             if (basketProduct.id == chosenProduct.id && basketProduct.color == chosenProduct.color) {
                 newQuantity = basketProduct.quantity + chosenProduct.quantity;
                 basketProduct.quantity = newQuantity;
+                basket.totalQuantity = chosenProduct.quantity + basket.totalQuantity;
+                totalChosenPrice = chosenProduct.quantity * chosenProduct.price;
+                basket.totalPrice = totalChosenPrice + basket.totalPrice;
                 boolean = true;
                 break;
             }
-        }   
+        } 
+
+        // ajout du produit choisi dans le panier (SI ils ont pas le même id et même color)
         if (boolean == false) {
             basket.products.push(chosenProduct);
+            newQuantity = basket.totalQuantity + chosenProduct.quantity;
+            basket.totalQuantity = newQuantity;
+            newPrice = basket.totalPrice + (chosenProduct.price * chosenProduct.quantity);
+            basket.totalPrice = newPrice;
         }
+        
+        window.alert('Vous avez bien ajouté ' + chosenProduct.quantity + ' canapé(s) ' + productUnit.name + ' de couleur ' + chosenProduct.color + ' dans votre panier !')
         let lineBasket = JSON.stringify(basket);
         localStorage.setItem("basket", lineBasket);
         
