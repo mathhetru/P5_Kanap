@@ -107,7 +107,7 @@ if (basketStr == null) {
 // Changement quantité et prix
 var quantityItem = document.querySelectorAll('.itemQuantity');
 
-for (let k = 0; k < quantityItem.length; k++){ 
+for (let k = 0; k < quantityItem.length; k++) { 
     quantityItemUnit = quantityItem[k];
     quantityItemUnit.addEventListener('change', function(event) {
         for (var l = 0 ; l < basket.products.length; l++) {
@@ -115,10 +115,15 @@ for (let k = 0; k < quantityItem.length; k++){
             var articleQuantityItemID = event.target.closest('article').getAttribute("data-id");
             var articleQuantityItemColor = event.target.closest('article').getAttribute("data-color");
             newQuantityValue = event.target.valueAsNumber;
+            
             if (basketProduct.id == articleQuantityItemID && basketProduct.color == articleQuantityItemColor) {
                 qtyToAdd = newQuantityValue - basketProduct.quantity;
                 basketProduct.quantity = newQuantityValue;
                 basket.totalQuantity = basket.totalQuantity + qtyToAdd;
+
+                priceToAdd = qtyToAdd * basketProduct.price;
+                basket.totalPrice = priceToAdd + basket.totalPrice;
+
                 let lineBasket = JSON.stringify(basket);
                 localStorage.setItem("basket", lineBasket);
                 window.location.reload();
@@ -130,16 +135,24 @@ for (let k = 0; k < quantityItem.length; k++){
 // Suppression du/des canapé(s)
 var delItem = document.querySelectorAll('.deleteItem');
 
-for (let j = 0; j < delItem.length; j++){
+for (let j = 0; j < delItem.length; j++) {
     delItemUnit = delItem[j];
     delItemUnit.addEventListener('click', function(event) {
-        var articleDelItemID = delItemUnit.closest('article').getAttribute("data-id");
-        var articleDelItemColor = delItemUnit.closest('article').getAttribute("data-color");
+        var articleDelItemID = event.target.closest('article').getAttribute("data-id");
+        var articleDelItemColor = event.target.closest('article').getAttribute("data-color");
         
         var basket = JSON.parse(basketStr);   
+        productToDel = basket.products.find(el => el.id == articleDelItemID && el.color == articleDelItemColor);
         
         result = basket.products.filter(el => el.id !== articleDelItemID || el.color !== articleDelItemColor);
         basket.products = result;
+
+        newQuantity = basket.totalQuantity - productToDel.quantity;
+        basket.totalQuantity = newQuantity;
+        priceToDel = productToDel.quantity * productToDel.price;
+        newPrice= basket.totalPrice - priceToDel; 
+        basket.totalPrice = newPrice;
+        
         let lineBasket = JSON.stringify(basket);
         localStorage.setItem("basket", lineBasket);
         window.location.reload()

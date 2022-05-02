@@ -117,7 +117,7 @@ sendToBasket.addEventListener('click', function (event) {
             basket.totalPrice = newPrice;
         }
         
-        window.alert('Vous avez bien ajouté ' + chosenProduct.quantity + ' canapé(s) ' + productUnit.name + ' de couleur ' + chosenProduct.color + ' dans votre panier !')
+        window.alert('Votre commande de ' + chosenProduct.quantity + ' ' + productUnit.name + ' ' + chosenProduct.color + ' est bien ajoutée au panier !')
         let lineBasket = JSON.stringify(basket);
         localStorage.setItem("basket", lineBasket);
         
