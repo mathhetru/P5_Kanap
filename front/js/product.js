@@ -75,7 +75,7 @@ sendToBasket.addEventListener('click', function (event) {
         let basketStr = localStorage.getItem('basket');
         if (basketStr == null) {
             var basket = {
-                totalPrice: 0,
+                // totalPrice: 0,
                 totalQuantity: 0,
                 products: []
             }
@@ -87,7 +87,7 @@ sendToBasket.addEventListener('click', function (event) {
         let chosenProduct = {
             id: productUnit._id,
             name: productUnit.name,
-            price: productUnit.price,
+            // price: productUnit.price,
             color: valueColor,
             quantity: Number(valueQuantity),
             img: productUnit.imageUrl,
@@ -101,8 +101,8 @@ sendToBasket.addEventListener('click', function (event) {
                 newQuantity = basketProduct.quantity + chosenProduct.quantity;
                 basketProduct.quantity = newQuantity;
                 basket.totalQuantity = chosenProduct.quantity + basket.totalQuantity;
-                totalChosenPrice = chosenProduct.quantity * chosenProduct.price;
-                basket.totalPrice = totalChosenPrice + basket.totalPrice;
+                // totalChosenPrice = chosenProduct.quantity * chosenProduct.price;
+                // basket.totalPrice = totalChosenPrice + basket.totalPrice;
                 boolean = true;
                 break;
             }
@@ -113,8 +113,8 @@ sendToBasket.addEventListener('click', function (event) {
             basket.products.push(chosenProduct);
             newQuantity = basket.totalQuantity + chosenProduct.quantity;
             basket.totalQuantity = newQuantity;
-            newPrice = basket.totalPrice + (chosenProduct.price * chosenProduct.quantity);
-            basket.totalPrice = newPrice;
+            // newPrice = basket.totalPrice + (chosenProduct.price * chosenProduct.quantity);
+            // basket.totalPrice = newPrice;
         }
         
         window.alert('Votre commande de ' + chosenProduct.quantity + ' ' + productUnit.name + ' ' + chosenProduct.color + ' est bien ajoutée au panier !')
