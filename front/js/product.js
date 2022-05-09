@@ -3,9 +3,7 @@ var str = window.location.href;
 var url = new URL(str);
 var idURL = url.searchParams.get("id");
 
-
-//APPEL API AVEC L'ID DU PRODUIT
-var requestURL = "http://localhost:3000/api/products/" + idURL
+/* var requestURL = "http://localhost:3000/api/products/" + idURL
 var request = new XMLHttpRequest();
 request.open('GET', requestURL, true);
 request.responseType = 'json';
@@ -14,8 +12,18 @@ var productUnit = "";
 request.onload = function (){
     productUnit = request.response;
     showProduct(productUnit);
-}
+}*/
 
+//APPEL API AVEC L'ID DU PRODUIT
+var productUnit = "";
+var requestURL = "http://localhost:3000/api/products/" + idURL
+fetch(requestURL)
+.then(response => response.json())
+.then(async function (resultatAPI) {
+    productUnit = await resultatAPI;
+    showProduct(productUnit);
+})
+.catch(error => alert("Erreur : " + error));
 
 //AFFICHAGE DU PRODUIT PAR PAGE PRODUIT
 function showProduct(productSheet) {

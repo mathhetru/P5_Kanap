@@ -1,33 +1,11 @@
-// récupération du contenu du panier 
+// Récupération du contenu du panier 
 let basketStr = localStorage.getItem('basket');
 var basket = JSON.parse(basketStr); 
 
-// récupération de cart__items
+// Récupération de cart__items
 var cartPanel = document.querySelector('#cart__items');
 
-// Afficher les prix
-
-var productUnit = "";
-fetch("http://localhost:3000/api/products/")
-.then(response => response.json())
-.then(async function (resultatAPI) {
-    productUnit = await resultatAPI;
-})
-.catch(error => alert("Erreur : " + error));
-/*
-function addPrice(produit){
-    for (var n = 0 ; n < produit.length; n++) {
-        APIproduit = produit[i];
-        // si l'id de data-id = l'id du produit dans l'api alors afficher le prix de ce produit
-        if (APIproduit._id == basketProduct.id) {
-            // insertion P price
-            var createpPrice = document.createElement('p');
-            createpPrice.textContent = "Prix : " + APIproduit.price + " € / canapé";
-            DivDes.appendChild(createpPrice);
-        }
-    }
-}*/
-
+// Afficher les produits dans la page panier (avec les prix)
 function showProductBasket(produit) {
     // AFFICHAGE DU/DES PRODUIT(S) PANIER
     // insertion des articles
@@ -118,7 +96,7 @@ function showProductBasket(produit) {
 }
 
 // SI le panier est vide, afficher "panier vide" 
-// SINON parse le panier, et utiliser la function showproductbasket 
+// SINON parser le panier, et utiliser la function showproductbasket 
 if (basketStr == null) {
     var createpEmpty = document.createElement('p');
     createpEmpty.textContent = 'Votre panier est vide';
@@ -160,8 +138,8 @@ for (let k = 0; k < quantityItem.length; k++) {
                 basketProduct.quantity = newQuantityValue;
                 basket.totalQuantity = basket.totalQuantity + qtyToAdd;
 
-                priceToAdd = qtyToAdd * basketProduct.price;
-                basket.totalPrice = priceToAdd + basket.totalPrice;
+                // priceToAdd = qtyToAdd * basketProduct.price;
+                // basket.totalPrice = priceToAdd + basket.totalPrice;
 
                 let lineBasket = JSON.stringify(basket);
                 localStorage.setItem("basket", lineBasket);
@@ -189,70 +167,119 @@ for (let j = 0; j < delItem.length; j++) {
         newQuantity = basket.totalQuantity - productToDel.quantity;
         basket.totalQuantity = newQuantity;
         priceToDel = productToDel.quantity * productToDel.price;
-        newPrice= basket.totalPrice - priceToDel; 
-        basket.totalPrice = newPrice;
+        // newPrice = basket.totalPrice - priceToDel; 
+        // basket.totalPrice = newPrice;
         
         window.alert('Vous avez bien supprimé votre produit du panier !')
-        let lineBasket = JSON.stringify(basket);
-        localStorage.setItem("basket", lineBasket);
-        window.location.reload()
+
+        if (basket.totalQuantity == 0) {
+            localStorage.clear();
+            window.location.reload()
+        } else {
+            let lineBasket = JSON.stringify(basket);
+            localStorage.setItem("basket", lineBasket);
+            window.location.reload()
+        }
     })
 };
 
 // Validation formulaire
-let form = document.querySelector(".cart__order__form");
+function getForm() {
+    let form = document.querySelector(".cart__order__form");
 
-var nameRegExp = new RegExp("^[A-zÀ-ú \-]+$");
-var adressRegExp = new RegExp("^[A-zÀ-ú0-9 ,.'\-]+$")
-var emailRegExp = new RegExp("^[a-zA-Z0-9_. -]+@[a-zA-Z.-]+$")
+    var adressRegExp = new RegExp("^[A-zÀ-ú0-9 ,.'\-]+$");
+    var nameRegExp = new RegExp("^[A-zÀ-ú \-]+$");
+    var emailRegExp = new RegExp("^[a-zA-Z0-9_. -]+@[a-zA-Z.-]+[.]{1}[a-z]{2,10}$");
 
-var firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
-form.firstName.addEventListener('change', function(e) {
-    var value = e.target.value;
-    if (nameRegExp.test(value)){
-        firstNameErrorMsg.innerHTML = '';
-    } else {
-        firstNameErrorMsg.innerHTML = 'Veuillez ajouter votre prénom.';
+    var firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
+    form.firstName.addEventListener('change', function(e) {
+        var value = e.target.value;
+        if (nameRegExp.test(value)){
+            firstNameErrorMsg.innerHTML = '';
+        } else {
+            firstNameErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre prénom.';
+        }
+    });
+
+    let lastNameErrorMsg = form.lastName.nextElementSibling;
+    form.lastName.addEventListener('change', function(e) {
+        var value = e.target.value;
+        if (nameRegExp.test(value)){
+            lastNameErrorMsg.innerHTML = '';
+        } else {
+            lastNameErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre nom.';
+        }
+    });
+
+    var adressErrorMsg = document.querySelector('#addressErrorMsg');
+    form.address.addEventListener('change', function(e) {
+        var value = e.target.value;
+        if (adressRegExp.test(value)){
+            adressErrorMsg.innerHTML = '';
+        } else {
+            adressErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre adresse postale.';
+        }
+    });
+
+    var cityErrorMsg = document.querySelector('#cityErrorMsg');
+    form.city.addEventListener('change', function(e) {
+        var value = e.target.value;
+        if (nameRegExp.test(value)){
+            cityErrorMsg.innerHTML = '';
+        } else {
+            cityErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre ville.';
+        }
+    });
+
+    var emailErrorMsg = document.querySelector('#emailErrorMsg');
+    form.email.addEventListener('change', function(e) {
+        var value = e.target.value;
+        if (emailRegExp.test(value)){
+            emailErrorMsg.innerHTML = '';
+        } else {
+            emailErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre adresse email.';
+        }
+    });
+}
+getForm();
+
+// Passer commande
+var btnOrder = document.querySelector('#order');
+
+btnOrder.addEventListener('click', function(e) {
+    let inputFirstName = document.getElementById('firstName');
+    let inputLastName = document.getElementById('lastName');
+    let inputAddress = document.getElementById('address');
+    let inputCity = document.getElementById('city');
+    let inputEmail = document.getElementById('email');
+
+    productID = [];
+    for (let m = 0; m < basket.products.length; m++) {
+        productID.push(basket.products[m].id);
     }
-});
 
-var lastNameErrorMsg = document.querySelector('#lastNameErrorMsg');
-form.lastName.addEventListener('change', function(e) {
-    var value = e.target.value;
-    if (nameRegExp.test(value)){
-        lastNameErrorMsg.innerHTML = '';
-    } else {
-        lastNameErrorMsg.innerHTML = 'Veuillez ajouter votre nom de famille.';
-    }
-});
+    let order = {
+        contact : {
+            firstName: inputFirstName.value,
+            lastName: inputLastName.value,
+            address: inputAddress.value,
+            city: inputCity.value,
+            email: inputEmail.value,
+        },
+        products : productID
+    }    
 
-var adressErrorMsg = document.querySelector('#addressErrorMsg');
-form.lastName.addEventListener('change', function(e) {
-    var value = e.target.value;
-    if (adressRegExp.test(value)){
-        lastNameErrorMsg.innerHTML = '';
-    } else {
-        adressErrorMsg.innerHTML = 'Veuillez ajouter votre adresse postale.';
-    }
+    fetch("http://localhost:3000/api/products/order", {
+	method: 'POST',
+    body: JSON.stringify(order),
+	headers: { 
+        'Accept': 'application/json', 
+        'Content-Type': 'application/json' 
+    },
+    })
+    .then((response) => response.json())
+    .then(async function (resultOrder) {
+        order = await resultOrder;
+        document.location.href = "confirmation.html?orderId=" + order.orderId;
+    })
 });
-
-var cityErrorMsg = document.querySelector('#cityErrorMsg');
-form.city.addEventListener('change', function(e) {
-    var value = e.target.value;
-    if (nameRegExp.test(value)){
-        cityErrorMsg.innerHTML = '';
-    } else {
-        cityErrorMsg.innerHTML = 'Veuillez ajouter votre ville.';
-    }
-});
-
-var emailErrorMsg = document.querySelector('#cityErrorMsg');
-form.email.addEventListener('change', function(e) {
-    var value = e.target.value;
-    if (emailRegExp.test(value)){
-        emailErrorMsg.innerHTML = '';
-    } else {
-        emailErrorMsg.innerHTML = 'Veuillez ajouter votre ville.';
-    }
-});
-
