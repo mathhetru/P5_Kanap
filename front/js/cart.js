@@ -169,8 +169,7 @@ for (let j = 0; j < delItem.length; j++) {
         priceToDel = productToDel.quantity * productToDel.price;
         // newPrice = basket.totalPrice - priceToDel; 
         // basket.totalPrice = newPrice;
-        
-        window.alert('Vous avez bien supprimé votre produit du panier !')
+        alert('Vous avez bien supprimé votre produit du panier !')
 
         if (basket.totalQuantity == 0) {
             localStorage.clear();
@@ -184,64 +183,61 @@ for (let j = 0; j < delItem.length; j++) {
 };
 
 // Validation formulaire
-function getForm() {
-    let form = document.querySelector(".cart__order__form");
+let form = document.querySelector(".cart__order__form");
 
-    var adressRegExp = new RegExp("^[A-zÀ-ú0-9 ,.'\-]+$");
-    var nameRegExp = new RegExp("^[A-zÀ-ú \-]+$");
-    var emailRegExp = new RegExp("^[a-zA-Z0-9_. -]+@[a-zA-Z.-]+[.]{1}[a-z]{2,10}$");
+var adressRegExp = new RegExp("^[A-zÀ-ú0-9 ,.'\-]+$");
+var nameRegExp = new RegExp("^[A-zÀ-ú \-]+$");
+var emailRegExp = new RegExp("^[a-zA-Z0-9_. -]+@[a-zA-Z.-]+[.]{1}[a-z]{2,10}$");
 
-    var firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
-    form.firstName.addEventListener('change', function(e) {
-        var value = e.target.value;
-        if (nameRegExp.test(value)){
-            firstNameErrorMsg.innerHTML = '';
-        } else {
-            firstNameErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre prénom.';
-        }
-    });
+var firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
+form.firstName.addEventListener('change', function(e) {
+    var value = e.target.value;
+    if (nameRegExp.test(value)){
+        firstNameErrorMsg.innerHTML = '';
+    } else {
+        firstNameErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre prénom.';
+    }
+});
 
-    let lastNameErrorMsg = form.lastName.nextElementSibling;
-    form.lastName.addEventListener('change', function(e) {
-        var value = e.target.value;
-        if (nameRegExp.test(value)){
-            lastNameErrorMsg.innerHTML = '';
-        } else {
-            lastNameErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre nom.';
-        }
-    });
+let lastNameErrorMsg = form.lastName.nextElementSibling;
+form.lastName.addEventListener('change', function(e) {
+    var value = e.target.value;
+    if (nameRegExp.test(value)){
+        lastNameErrorMsg.innerHTML = '';
+    } else {
+        lastNameErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre nom.';
+    }
+});
 
-    var adressErrorMsg = document.querySelector('#addressErrorMsg');
-    form.address.addEventListener('change', function(e) {
-        var value = e.target.value;
-        if (adressRegExp.test(value)){
-            adressErrorMsg.innerHTML = '';
-        } else {
-            adressErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre adresse postale.';
-        }
-    });
+var adressErrorMsg = document.querySelector('#addressErrorMsg');
+form.address.addEventListener('change', function(e) {
+    var value = e.target.value;
+    if (adressRegExp.test(value)){
+        adressErrorMsg.innerHTML = '';
+    } else {
+        adressErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre adresse postale.';
+    }
+});
 
-    var cityErrorMsg = document.querySelector('#cityErrorMsg');
-    form.city.addEventListener('change', function(e) {
-        var value = e.target.value;
-        if (nameRegExp.test(value)){
-            cityErrorMsg.innerHTML = '';
-        } else {
-            cityErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre ville.';
-        }
-    });
+var cityErrorMsg = document.querySelector('#cityErrorMsg');
+form.city.addEventListener('change', function(e) {
+    var value = e.target.value;
+    if (nameRegExp.test(value)){
+        cityErrorMsg.innerHTML = '';
+    } else {
+        cityErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre ville.';
+    }
+});
 
-    var emailErrorMsg = document.querySelector('#emailErrorMsg');
-    form.email.addEventListener('change', function(e) {
-        var value = e.target.value;
-        if (emailRegExp.test(value)){
-            emailErrorMsg.innerHTML = '';
-        } else {
-            emailErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre adresse email.';
-        }
-    });
-}
-getForm();
+var emailErrorMsg = document.querySelector('#emailErrorMsg');
+form.email.addEventListener('change', function(e) {
+    var value = e.target.value;
+    if (emailRegExp.test(value)){
+        emailErrorMsg.innerHTML = '';
+    } else {
+        emailErrorMsg.innerHTML = 'Champ invalide, veuillez vérifier votre adresse email.';
+    }
+});
 
 // Passer commande
 var btnOrder = document.querySelector('#order');
@@ -252,34 +248,42 @@ btnOrder.addEventListener('click', function(e) {
     let inputAddress = document.getElementById('address');
     let inputCity = document.getElementById('city');
     let inputEmail = document.getElementById('email');
-
+    
     productID = [];
     for (let m = 0; m < basket.products.length; m++) {
         productID.push(basket.products[m].id);
-    }
+        }
 
     let order = {
-        contact : {
-            firstName: inputFirstName.value,
-            lastName: inputLastName.value,
-            address: inputAddress.value,
-            city: inputCity.value,
-            email: inputEmail.value,
-        },
-        products : productID
-    }    
-
-    fetch("http://localhost:3000/api/products/order", {
-	method: 'POST',
-    body: JSON.stringify(order),
-	headers: { 
-        'Accept': 'application/json', 
-        'Content-Type': 'application/json' 
+    contact : {
+        firstName: inputFirstName.value,
+        lastName: inputLastName.value,
+        address: inputAddress.value,
+        city: inputCity.value,
+        email: inputEmail.value,
     },
-    })
-    .then((response) => response.json())
-    .then(async function (resultOrder) {
-        order = await resultOrder;
-        document.location.href = "confirmation.html?orderId=" + order.orderId;
-    })
+    products : productID
+    }
+
+    if (firstName.value === "" || lastName.value === "" || address.value === "" || city.value === "" || email.value === "") {
+        alert("Vous devez renseigner vos coordonnées pour passer la commande !");
+        e.preventDefault();
+    } else if (nameRegExp.test(inputFirstName.value) ==  false || nameRegExp.test(inputLastName.value) ==  false || adressRegExp.test(inputAddress.value) ==  false || nameRegExp.test(inputCity.value) ==  false || emailRegExp.test(inputEmail.value) ==  false) {
+        alert("Vérifiez vos coordonnées pour passer la commande !");
+        e.preventDefault();
+    } else {
+        fetch("http://localhost:3000/api/products/order", {
+        method: 'POST',
+        body: JSON.stringify(order),
+        headers: { 
+            'Accept': 'application/json', 
+            'Content-Type': 'application/json' 
+        },
+        })
+        .then((response) => response.json())
+        .then(async function (resultOrder) {
+            order = await resultOrder;
+            document.location.href = "confirmation.html?orderId=" + order.orderId;
+        })
+    }
 });

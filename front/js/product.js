@@ -77,7 +77,7 @@ sendToBasket.addEventListener('click', function (event) {
     let valueColor = chosenColor.value; 
     let valueQuantity = chosenQuantity.value;
     if (valueQuantity <= 0 || valueQuantity > 100 || valueColor == ""){
-        window.alert("Veuillez choisir une quantité entre 1 et 100 et/ou une couleur de canapé");
+        alert("Veuillez choisir une quantité entre 1 et 100 et/ou une couleur de canapé");
     } else {
         // récupération du contenu du panier (sans produit choisi de la page actuel)
         let basketStr = localStorage.getItem('basket');
@@ -124,11 +124,10 @@ sendToBasket.addEventListener('click', function (event) {
             // newPrice = basket.totalPrice + (chosenProduct.price * chosenProduct.quantity);
             // basket.totalPrice = newPrice;
         }
-        
-        window.alert('Votre commande de ' + chosenProduct.quantity + ' ' + productUnit.name + ' ' + chosenProduct.color + ' est bien ajoutée au panier !')
+        alert('Votre commande de ' + chosenProduct.quantity + ' ' + productUnit.name + ' ' + chosenProduct.color + ' est bien ajoutée au panier !');
         let lineBasket = JSON.stringify(basket);
         localStorage.setItem("basket", lineBasket);
-        
+        window.location.reload();
         /*     
         for (var i = 0 ; i < basket.products.length; i++) {
             basketProduct = basket.products[i];
