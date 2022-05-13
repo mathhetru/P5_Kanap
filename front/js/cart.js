@@ -1,6 +1,6 @@
 // Récupération du contenu du panier 
 let basketStr = localStorage.getItem('basket');
-var basket = JSON.parse(basketStr); 
+var basket = JSON.parse(basketStr);
 
 // Récupération de cart__items
 var cartPanel = document.querySelector('#cart__items');
@@ -95,92 +95,96 @@ function showProductBasket(produit) {
     createDivContSetDel.appendChild(createpDelete);
 }
 
+
 // SI le panier est vide, afficher "panier vide" 
 // SINON parser le panier, et utiliser la function showproductbasket 
-if (basketStr == null) {
-    var createpEmpty = document.createElement('p');
-    createpEmpty.textContent = 'Votre panier est vide';
-    cartPanel.appendChild(createpEmpty);
-} else {   
-    var totalPrice = 0;
-    for (var i = 0 ; i < basket.products.length; i++) {
-        basketProduct = basket.products[i];
-        showProductBasket(basketProduct);
-        fetch("http://localhost:3000/api/products/" + basketProduct.id)
-        .then(response => response.json())
-        .then(async function (resultatAPI) {
-            var productsPrice = await resultatAPI;
-            totalPrice += productsPrice.price * basketProduct.quantity;
-            let totalPriceElt = document.querySelector('#totalPrice');
-            totalPriceElt.textContent = totalPrice;
-        })
-    }
-    let totalQuantity = document.querySelector('#totalQuantity');
-    let totalPriceElt = document.querySelector('#totalPrice');
-    totalPriceElt.textContent = totalPrice;
-    totalQuantity.textContent = basket.totalQuantity;
+async function getProduct(id) {
+    return fetch("http://localhost:3000/api/products/" + id)
+    .then(response => response.json())
 }
 
+async function showCart() {
+    if (basketStr == null) {
+        var createpEmpty = document.createElement('p');
+        createpEmpty.textContent = 'Votre panier est vide';
+        cartPanel.appendChild(createpEmpty);
+    } else {   
+        var totalPrice = 0;
+        for (var i = 0 ; i < basket.products.length; i++) {
+            basketProduct = basket.products[i];
+            showProductBasket(basketProduct);
+            var productsPrice = await getProduct(basketProduct.id);
+            var productQuantity = basketProduct.quantity;
+            totalPrice += productsPrice.price * productQuantity;
+            let totalPriceElt = document.querySelector('#totalPrice');
+            totalPriceElt.textContent = totalPrice;
+        }
+        let totalQuantity = document.querySelector('#totalQuantity');
+        totalQuantity.textContent = basket.totalQuantity;
+        changeQuantity()
+        delProduct()
+    }
+}
+showCart();
+
 // Changement quantité et prix
-var quantityItem = document.querySelectorAll('.itemQuantity');
-
-for (let k = 0; k < quantityItem.length; k++) { 
-    quantityItemUnit = quantityItem[k];
-    quantityItemUnit.addEventListener('change', function(event) {
-        for (var l = 0 ; l < basket.products.length; l++) {
-            basketProduct = basket.products[l];
-            var articleQuantityItemID = event.target.closest('article').getAttribute("data-id");
-            var articleQuantityItemColor = event.target.closest('article').getAttribute("data-color");
-            newQuantityValue = event.target.valueAsNumber;
-            
-            if (basketProduct.id == articleQuantityItemID && basketProduct.color == articleQuantityItemColor) {
-                qtyToAdd = newQuantityValue - basketProduct.quantity;
-                basketProduct.quantity = newQuantityValue;
-                basket.totalQuantity = basket.totalQuantity + qtyToAdd;
-
-                // priceToAdd = qtyToAdd * basketProduct.price;
-                // basket.totalPrice = priceToAdd + basket.totalPrice;
-
-                let lineBasket = JSON.stringify(basket);
-                localStorage.setItem("basket", lineBasket);
-                window.location.reload();
-            }
-        }  
-    })
-};
+function changeQuantity() {
+    var quantityItem = document.querySelectorAll('.itemQuantity');
+    for (let k = 0; k < quantityItem.length; k++) { 
+        quantityItemUnit = quantityItem[k];
+        quantityItemUnit.addEventListener('change', function(event) {
+            for (var l = 0 ; l < basket.products.length; l++) {
+                basketProduct = basket.products[l];
+                var articleQuantityItemID = event.target.closest('article').getAttribute("data-id");
+                var articleQuantityItemColor = event.target.closest('article').getAttribute("data-color");
+                newQuantityValue = event.target.valueAsNumber;
+                
+                if (basketProduct.id == articleQuantityItemID && basketProduct.color == articleQuantityItemColor) {
+                    qtyToAdd = newQuantityValue - basketProduct.quantity;
+                    basketProduct.quantity = newQuantityValue;
+                    basket.totalQuantity = basket.totalQuantity + qtyToAdd;
+                    let lineBasket = JSON.stringify(basket);
+                    localStorage.setItem("basket", lineBasket);
+                    window.location.reload();
+                }
+            }  
+        })
+    };
+}
 
 // Suppression du/des canapé(s)
-var delItem = document.querySelectorAll('.deleteItem');
+function delProduct() {
+    var delItem = document.querySelectorAll('.deleteItem');
+    for (let j = 0; j < delItem.length; j++) {
+        delItemUnit = delItem[j];
+        delItemUnit.addEventListener('click', function(event) {
+            var articleDelItemID = event.target.closest('article').getAttribute("data-id");
+            var articleDelItemColor = event.target.closest('article').getAttribute("data-color");
+            
+            var basket = JSON.parse(basketStr);   
+            productToDel = basket.products.find(el => el.id == articleDelItemID && el.color == articleDelItemColor);
+            
+            result = basket.products.filter(el => el.id !== articleDelItemID || el.color !== articleDelItemColor);
+            basket.products = result;
 
-for (let j = 0; j < delItem.length; j++) {
-    delItemUnit = delItem[j];
-    delItemUnit.addEventListener('click', function(event) {
-        var articleDelItemID = event.target.closest('article').getAttribute("data-id");
-        var articleDelItemColor = event.target.closest('article').getAttribute("data-color");
-        
-        var basket = JSON.parse(basketStr);   
-        productToDel = basket.products.find(el => el.id == articleDelItemID && el.color == articleDelItemColor);
-        
-        result = basket.products.filter(el => el.id !== articleDelItemID || el.color !== articleDelItemColor);
-        basket.products = result;
+            newQuantity = basket.totalQuantity - productToDel.quantity;
+            basket.totalQuantity = newQuantity;
+            priceToDel = productToDel.quantity * productToDel.price;
+            // newPrice = basket.totalPrice - priceToDel; 
+            // basket.totalPrice = newPrice;
+            alert('Vous avez bien supprimé votre produit du panier !')
 
-        newQuantity = basket.totalQuantity - productToDel.quantity;
-        basket.totalQuantity = newQuantity;
-        priceToDel = productToDel.quantity * productToDel.price;
-        // newPrice = basket.totalPrice - priceToDel; 
-        // basket.totalPrice = newPrice;
-        alert('Vous avez bien supprimé votre produit du panier !')
-
-        if (basket.totalQuantity == 0) {
-            localStorage.clear();
-            window.location.reload()
-        } else {
-            let lineBasket = JSON.stringify(basket);
-            localStorage.setItem("basket", lineBasket);
-            window.location.reload()
-        }
-    })
-};
+            if (basket.totalQuantity == 0) {
+                localStorage.clear();
+                window.location.reload()
+            } else {
+                let lineBasket = JSON.stringify(basket);
+                localStorage.setItem("basket", lineBasket);
+                window.location.reload()
+            }
+        })
+    };
+}
 
 // Validation formulaire
 let form = document.querySelector(".cart__order__form");
@@ -243,6 +247,7 @@ form.email.addEventListener('change', function(e) {
 var btnOrder = document.querySelector('#order');
 
 btnOrder.addEventListener('click', function(e) {
+    e.preventDefault();
     let inputFirstName = document.getElementById('firstName');
     let inputLastName = document.getElementById('lastName');
     let inputAddress = document.getElementById('address');
