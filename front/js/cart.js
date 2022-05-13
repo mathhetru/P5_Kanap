@@ -101,6 +101,7 @@ function showProductBasket(produit) {
 async function getProduct(id) {
     return fetch("http://localhost:3000/api/products/" + id)
     .then(response => response.json())
+    .catch(error => alert("Erreur : " + error));
 }
 
 async function showCart() {
@@ -289,6 +290,8 @@ btnOrder.addEventListener('click', function(e) {
         .then(async function (resultOrder) {
             order = await resultOrder;
             document.location.href = "confirmation.html?orderId=" + order.orderId;
+            localStorage.clear();
         })
     }
 });
+// ajouter msg d'erreur si commande avec panier vide 
