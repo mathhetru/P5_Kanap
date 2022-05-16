@@ -1,4 +1,4 @@
-//RECUPERATION DE L'ID DANS L'URL
+//Récupération de l'id dans l'URL
 var str = window.location.href;
 var url = new URL(str);
 var idURL = url.searchParams.get("id");
@@ -14,7 +14,7 @@ request.onload = function (){
     showProduct(productUnit);
 }*/
 
-//APPEL API AVEC L'ID DU PRODUIT
+//Appel API avec l'id du produit
 var productUnit = "";
 var requestURL = "http://localhost:3000/api/products/" + idURL
 fetch(requestURL)
@@ -25,7 +25,7 @@ fetch(requestURL)
 })
 .catch(error => alert("Erreur : " + error));
 
-//AFFICHAGE DU PRODUIT PAR PAGE PRODUIT
+//Affichage du produit par page produit
 function showProduct(productSheet) {
     document.title = productSheet.name;
     let panelIMG = document.querySelector('.item__img');
@@ -64,7 +64,7 @@ function showProduct(productSheet) {
     }
 }
 
-//ADD TO LOCALSTORAGE
+//Ajouter au localstorage
 
 // récupération de #colors, #quantity et #addToCard
 let chosenColor = document.querySelector('#colors');
@@ -128,8 +128,7 @@ sendToBasket.addEventListener('click', function (event) {
         let lineBasket = JSON.stringify(basket);
         localStorage.setItem("basket", lineBasket);
         window.location.reload();
-        /*     
-        for (var i = 0 ; i < basket.products.length; i++) {
+        /*for (var i = 0 ; i < basket.products.length; i++) {
             basketProduct = basket.products[i];
             if (basketProduct.id == chosenProduct.id && basketProduct.color == chosenProduct.color) {
                 newQuantity = basketProduct.quantity + chosenProduct.quantity;

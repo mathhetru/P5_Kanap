@@ -1,11 +1,11 @@
-// Récupération du contenu du panier 
+// Récupération du contenu du panier à partir du localstorage
 let basketStr = localStorage.getItem('basket');
 var basket = JSON.parse(basketStr);
 
-// Récupération de cart__items
+// Récupération de l'élement "cart__items"
 var cartPanel = document.querySelector('#cart__items');
 
-// Afficher les produits dans la page panier (avec les prix)
+// Affichage des produits dans la page panier (avec les prix en fetch)
 function showProductBasket(produit) {
     // AFFICHAGE DU/DES PRODUIT(S) PANIER
     // insertion des articles
@@ -95,15 +95,15 @@ function showProductBasket(produit) {
     createDivContSetDel.appendChild(createpDelete);
 }
 
-
-// SI le panier est vide, afficher "panier vide" 
-// SINON parser le panier, et utiliser la function showproductbasket 
+// Récupération de produit dans l'API via son id 
 async function getProduct(id) {
     return fetch("http://localhost:3000/api/products/" + id)
     .then(response => response.json())
     .catch(error => alert("Erreur : " + error));
 }
 
+// SI le panier est vide, afficher "panier vide" 
+// SINON parser le panier, et utiliser la function showproductbasket 
 async function showCart() {
     if (basketStr == null) {
         var createpEmpty = document.createElement('p');
@@ -153,7 +153,7 @@ function changeQuantity() {
     };
 }
 
-// Suppression du/des canapé(s)
+// Suppression d'un canapé
 function delProduct() {
     var delItem = document.querySelectorAll('.deleteItem');
     for (let j = 0; j < delItem.length; j++) {
@@ -173,7 +173,7 @@ function delProduct() {
             priceToDel = productToDel.quantity * productToDel.price;
             // newPrice = basket.totalPrice - priceToDel; 
             // basket.totalPrice = newPrice;
-            alert('Vous avez bien supprimé votre produit du panier !')
+            alert('Vous avez bien supprimé votre produit du panier !');
 
             if (basket.totalQuantity == 0) {
                 localStorage.clear();
@@ -190,6 +190,7 @@ function delProduct() {
 // Validation formulaire
 let form = document.querySelector(".cart__order__form");
 
+// REGEX
 var adressRegExp = new RegExp("^[A-zÀ-ú0-9 ,.'\-]+$");
 var nameRegExp = new RegExp("^[A-zÀ-ú \-]+$");
 var emailRegExp = new RegExp("^[a-zA-Z0-9_. -]+@[a-zA-Z.-]+[.]{1}[a-z]{2,10}$");
@@ -255,36 +256,41 @@ btnOrder.addEventListener('click', function(e) {
     let inputCity = document.getElementById('city');
     let inputEmail = document.getElementById('email');
     
-    productID = [];
-    for (let m = 0; m < basket.products.length; m++) {
-        productID.push(basket.products[m].id);
-        }
+    
 
-    let order = {
-    contact : {
-        firstName: inputFirstName.value,
-        lastName: inputLastName.value,
-        address: inputAddress.value,
-        city: inputCity.value,
-        email: inputEmail.value,
-    },
-    products : productID
-    }
-
-    if (firstName.value === "" || lastName.value === "" || address.value === "" || city.value === "" || email.value === "") {
+    if (basketStr == null) {
+        alert("Pour passer commande, veuillez ajouter des produits à votre panier");
+        e.preventDefault();
+    } else if (firstName.value === "" || lastName.value === "" || address.value === "" || city.value === "" || email.value === "") {
         alert("Vous devez renseigner vos coordonnées pour passer la commande !");
         e.preventDefault();
     } else if (nameRegExp.test(inputFirstName.value) ==  false || nameRegExp.test(inputLastName.value) ==  false || adressRegExp.test(inputAddress.value) ==  false || nameRegExp.test(inputCity.value) ==  false || emailRegExp.test(inputEmail.value) ==  false) {
         alert("Vérifiez vos coordonnées pour passer la commande !");
         e.preventDefault();
     } else {
+        productID = [];
+        for (let m = 0; m < basket.products.length; m++) {
+        productID.push(basket.products[m].id);
+        }
+
+        let order = {
+        contact : {
+            firstName: inputFirstName.value,
+            lastName: inputLastName.value,
+            address: inputAddress.value,
+            city: inputCity.value,
+            email: inputEmail.value,
+        },
+        products : productID
+        }
+
         fetch("http://localhost:3000/api/products/order", {
         method: 'POST',
         body: JSON.stringify(order),
         headers: { 
             'Accept': 'application/json', 
             'Content-Type': 'application/json' 
-        },
+            },
         })
         .then((response) => response.json())
         .then(async function (resultOrder) {
@@ -294,4 +300,3 @@ btnOrder.addEventListener('click', function(e) {
         })
     }
 });
-// ajouter msg d'erreur si commande avec panier vide 

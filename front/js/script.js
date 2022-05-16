@@ -1,4 +1,4 @@
-/*var requestURL = "http://localhost:3000/api/products"
+/* var requestURL = "http://localhost:3000/api/products"
 var request = new XMLHttpRequest();
 request.open('GET', requestURL, true);
 request.responseType = 'json';
@@ -8,7 +8,7 @@ request.onload = function (){
     showCouchs(allCouch);
 }*/
 
-//APPEL API DE TOUS LES PRODUITS
+//Appel API de tous les produits
 var allCouch = "";
 var requestURL = "http://localhost:3000/api/products/"
 fetch(requestURL)
@@ -20,7 +20,7 @@ fetch(requestURL)
 .catch(error => alert("Erreur : " + error));
 
 
-// AFFICHAGE DES PRODUITS
+// Affichage des produits
 function showCouchs(productsSheet) {
     for (var i = 0; i < productsSheet.length; i++){
         var product = productsSheet[i];
