@@ -13,12 +13,11 @@ var allCouch = "";
 var requestURL = "http://localhost:3000/api/products/"
 fetch(requestURL)
 .then(response => response.json())
-.then(function (resultatAPI) {
-    allCouch = resultatAPI;
+.then(async function (resultatAPI) {
+    allCouch = await resultatAPI;
     showCouchs(allCouch);
 })
 .catch(error => alert("Erreur : " + error));
-
 
 // Affichage des produits
 function showCouchs(productsSheet) {

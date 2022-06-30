@@ -1,20 +1,9 @@
-//Récupération de l'id dans l'URL
-var str = window.location.href;
-var url = new URL(str);
+// Récupération de l'id dans l'URL
+var string = window.location.href;
+var url = new URL(string);
 var idURL = url.searchParams.get("id");
 
-/* var requestURL = "http://localhost:3000/api/products/" + idURL
-var request = new XMLHttpRequest();
-request.open('GET', requestURL, true);
-request.responseType = 'json';
-request.send();
-var productUnit = "";
-request.onload = function (){
-    productUnit = request.response;
-    showProduct(productUnit);
-}*/
-
-//Appel API avec l'id du produit
+// Appel API avec l'id du produit
 var productUnit = "";
 var requestURL = "http://localhost:3000/api/products/" + idURL
 fetch(requestURL)
@@ -25,7 +14,7 @@ fetch(requestURL)
 })
 .catch(error => alert("Erreur : " + error));
 
-//Affichage du produit par page produit
+// Affichage du produit par page produit
 function showProduct(productSheet) {
     document.title = productSheet.name;
     let panelIMG = document.querySelector('.item__img');
@@ -64,7 +53,7 @@ function showProduct(productSheet) {
     }
 }
 
-//Ajouter au localstorage
+// Ajouter au localstorage
 
 // récupération de #colors, #quantity et #addToCard
 let chosenColor = document.querySelector('#colors');
@@ -73,7 +62,7 @@ let sendToBasket = document.querySelector('#addToCart');
 
 // écoute du click sur l'ajout au panier
 sendToBasket.addEventListener('click', function (event) {
-     // récupération des valeurs de quantité et de couleurs du produit choisi dans des variables
+    // récupération des valeurs de quantité et de couleurs du produit choisi dans des variables
     let valueColor = chosenColor.value; 
     let valueQuantity = chosenQuantity.value;
     if (valueQuantity <= 0 || valueQuantity > 100 || valueColor == ""){
@@ -83,7 +72,6 @@ sendToBasket.addEventListener('click', function (event) {
         let basketStr = localStorage.getItem('basket');
         if (basketStr == null) {
             var basket = {
-                // totalPrice: 0,
                 totalQuantity: 0,
                 products: []
             }
@@ -95,7 +83,6 @@ sendToBasket.addEventListener('click', function (event) {
         let chosenProduct = {
             id: productUnit._id,
             name: productUnit.name,
-            // price: productUnit.price,
             color: valueColor,
             quantity: Number(valueQuantity),
             img: productUnit.imageUrl,
@@ -109,8 +96,6 @@ sendToBasket.addEventListener('click', function (event) {
                 newQuantity = basketProduct.quantity + chosenProduct.quantity;
                 basketProduct.quantity = newQuantity;
                 basket.totalQuantity = chosenProduct.quantity + basket.totalQuantity;
-                // totalChosenPrice = chosenProduct.quantity * chosenProduct.price;
-                // basket.totalPrice = totalChosenPrice + basket.totalPrice;
                 boolean = true;
                 break;
             }
@@ -121,24 +106,10 @@ sendToBasket.addEventListener('click', function (event) {
             basket.products.push(chosenProduct);
             newQuantity = basket.totalQuantity + chosenProduct.quantity;
             basket.totalQuantity = newQuantity;
-            // newPrice = basket.totalPrice + (chosenProduct.price * chosenProduct.quantity);
-            // basket.totalPrice = newPrice;
         }
         alert('Votre commande de ' + chosenProduct.quantity + ' ' + productUnit.name + ' ' + chosenProduct.color + ' est bien ajoutée au panier !');
         let lineBasket = JSON.stringify(basket);
         localStorage.setItem("basket", lineBasket);
         window.location.reload();
-        /*for (var i = 0 ; i < basket.products.length; i++) {
-            basketProduct = basket.products[i];
-            if (basketProduct.id == chosenProduct.id && basketProduct.color == chosenProduct.color) {
-                newQuantity = basketProduct.quantity + chosenProduct.quantity;
-                basketProduct.quantity = newQuantity;
-            } else { 
-                basket.products.push(chosenProduct);
-            }
-        }   
-        let lineBasket = JSON.stringify(basket);
-        localStorage.setItem("basket", lineBasket); 
-        */
     }
 });

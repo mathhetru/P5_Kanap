@@ -46,11 +46,12 @@ function showProductBasket(produit) {
     createpColor.textContent = "Couleur : " + produit.color;
     createDivDes.appendChild(createpColor);
 
+    // recupération du prix en utilisant l'id du produit
     var productUnit = "";
     fetch("http://localhost:3000/api/products/" + produit.id)
     .then(response => response.json())
-    .then(function (resultatAPI) {
-        productUnit = resultatAPI;
+    .then(async function (resultatAPI) {
+        productUnit = await resultatAPI;
         // insertion P price
         var createpPrice = document.createElement('p');
         createpPrice.textContent = "Prix : " + productUnit.price + " € / canapé";
@@ -171,8 +172,6 @@ function delProduct() {
             newQuantity = basket.totalQuantity - productToDel.quantity;
             basket.totalQuantity = newQuantity;
             priceToDel = productToDel.quantity * productToDel.price;
-            // newPrice = basket.totalPrice - priceToDel; 
-            // basket.totalPrice = newPrice;
             alert('Vous avez bien supprimé votre produit du panier !');
 
             if (basket.totalQuantity == 0) {
